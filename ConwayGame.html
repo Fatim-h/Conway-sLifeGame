@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conway Game of Life</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        #main {
+            background-color: black;
+            width: 500px;
+            height: 500px;
+            display: grid;
+            grid-template-columns: repeat(10, 1fr); /* 10 columns */
+            grid-template-rows: repeat(10, 1fr); /* 10 rows */
+        }
+
+        .cell {
+            background-color: aliceblue;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+        
+    </div>
+    <button id ="start" onclick="start(200)">START</button>
+    <button id="reset" onclick="clearGrid()">RESET</button>
+    <script>
+        let x = 0;
+        // Function to create grid cells dynamically
+        function createGrid() {
+            const main = document.getElementById('main');
+
+            // Create 100 cells (10x10 grid)
+            for (let j = 0; j < 100; j++) {
+                let cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.id = 'cell' + j;
+                cell.addEventListener('mouseover', alert);
+                main.appendChild(cell);
+            }
+        }
+
+        // Function to color the cells on mouseover
+        function alert(event) {
+            let clickedCell = event.target;
+            clickedCell.style.backgroundColor = "lightgray";
+        }
+
+        // Function to clear the grid (reset to initial state)
+        function clearGrid() {
+            location.reload();
+            
+        }
+        function start(time) {
+            intervalId = setInterval(life, time); // Update grid
+        }
+        function life() {
+        const cells = document.getElementsByClassName('cell');
+        for (let cell of cells) {
+            let id = parseInt(cell.id.substring(4)); // Extract numeric part of cell ID
+            let row = Math.floor(id / 10);
+            let col = id % 10;
+            let sum = 0;
+
+            // Count live neighbors
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    if (!(i === 0 && j === 0)) { 
+                        let neighborRow = row + i;
+                        let neighborCol = col + j;
+
+                        // Check if neighbor is within bounds
+                        if (neighborRow >= 0 && neighborRow < 10 && neighborCol >= 0 && neighborCol < 10) {
+                            let neighborId = neighborRow * 10 + neighborCol;
+                            let neighborCell = document.getElementById('cell' + neighborId);
+                            if (neighborCell.style.backgroundColor === 'lightgray') {
+                                sum++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (cell.style.backgroundColor === 'lightgray' && (sum === 2 || sum === 3)) {
+                // Cell survives
+                // Do nothing, already lightgray
+            } else if (cell.style.backgroundColor === 'aliceblue' && sum === 3) {
+                // Cell becomes alive
+                cell.style.backgroundColor = 'lightgray';
+            } else {
+                // Cell dies or remains dead
+                cell.style.backgroundColor = 'aliceblue';
+            }
+        }
+    }
+            
+        document.addEventListener('DOMContentLoaded', createGrid);
+        </script>
+</body>
+</html>
